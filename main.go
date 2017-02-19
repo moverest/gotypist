@@ -1,6 +1,11 @@
 package main
 
-import "github.com/nsf/termbox-go"
+import (
+	"io/ioutil"
+	"os"
+
+	"github.com/nsf/termbox-go"
+)
 
 const (
 	defaultLineBgColor          = termbox.ColorDefault
@@ -24,7 +29,26 @@ func main() {
 
 	width, _ := termbox.Size()
 
-	game := NewGame("This is a test.\nA real test.")
+	var game *Game
+
+	if len(os.Args) > 1 {
+		b, err := ioutil.ReadFile(os.Args[1])
+		if err != nil {
+			panic("Could not load given file.")
+		}
+
+		game = NewGame(string(b))
+	} else {
+		game = NewGame(`Gotypist is a simple typing training program written in go.
+
+To quit hit the ESCAPE key.
+
+To load a file as training text,
+Pass it as an argument.
+
+You cannot use backspace to correct a mistake.
+Hit ENTER to retry the current line.`)
+	}
 
 	stop := false
 	for !stop {
